@@ -1,8 +1,148 @@
-# slam_with_on_go1
+# slam_on_go1
 
 ROS Melodic workspace package for odometry-assisted 2D LaserScan SLAM and navigation on a Unitree Go1-style robot platform.
 
-This repository currently contains `slam_v44`, an experimental SLAM package that keeps the startup pose fixed at the `map` origin, uses odometry as the primary short-term motion prediction, and applies scan matching only as a local correction around the odometry estimate.
+# slam_v44 Concept Summary
+
+`slam_v44` is a ROS Melodic package for odometry-assisted 2D LaserScan SLAM, occupancy grid mapping, and basic navigation.
+
+The main idea is to use odometry as the primary source of continuous motion estimation, use scan matching only for small local corrections, and then insert LaserScan data into a fixed `map` frame.
+
+## Core Idea
+
+```text
+Odometry prediction
+        +
+Local scan matching correction
+        +
+Fixed-frame occupancy grid mapping
+```
+
+Instead of relying only on scan matching, `slam_v44` uses odometry to provide a stable pose prediction. Scan matching then corrects small errors around that predicted pose.
+
+## Startup Pose
+
+When the node starts, the first odometry pose is saved as the reference pose.
+
+After that, all odometry poses are converted into motion relative to the startup pose:
+
+```text
+relative_odom = inverse(start_odom) * current_odom
+```
+
+This means the robot starts at the origin of the `map` frame:
+
+```text
+x = 0
+y = 0
+theta = 0
+```
+
+## SLAM Workflow
+
+For each incoming LaserScan frame, the system follows this process:
+
+```text
+1. Receive odometry
+2. Compute relative odometry from the startup pose
+3. Predict the current pose in the map frame
+4. Run scan matching near the predicted pose
+5. Use the corrected pose if the match score is good
+6. Fall back to odometry prediction if scan matching is unreliable
+7. Insert the LaserScan points into the occupancy grid map
+8. Publish map, pose, path, and TF
+```
+
+## Odometry-Based Prediction
+
+Odometry provides the main motion estimate.
+
+This helps keep the robot pose continuous, especially when the environment is not good for scan matching, such as:
+
+- Open spaces
+- Few obstacles
+- Repetitive structures
+- Noisy LaserScan data
+
+## Local Scan Matching
+
+Scan matching is only used as a local correction step.
+
+The system searches in a small window around the odometry-predicted pose:
+
+```text
+small x offset
+small y offset
+small theta offset
+```
+
+The candidate pose with the best map correlation score is selected as the corrected pose.
+
+If the score is too low, the system ignores the scan matching result and keeps the odometry prediction.
+
+## Occupancy Grid Mapping
+
+After the current pose is determined, LaserScan points are transformed into the fixed `map` frame.
+
+For each laser beam:
+
+- Cells between the robot and the laser endpoint are marked as free space.
+- The laser endpoint is marked as occupied.
+- The map is updated probabilistically using log-odds.
+
+The final map is published as a ROS `nav_msgs/OccupancyGrid`.
+
+## TF Structure
+
+The default TF structure is:
+
+```text
+map -> odom -> base_link
+```
+
+Frame meanings:
+
+- `map`: fixed global map frame
+- `odom`: continuous odometry frame, may drift over time
+- `base_link`: robot body frame
+
+By default, `slam_v44` publishes the `map -> odom` correction.  
+The robot base or SDK should publish `odom -> base_link`.
+
+## Navigation
+
+The navigation module uses the generated occupancy grid map.
+
+The navigation process is:
+
+```text
+1. Receive a goal
+2. Plan a global path with A*
+3. Track the path with a lookahead-based local controller
+4. Monitor the front LaserScan distance
+5. Slow down or stop when an obstacle is too close
+```
+
+By default, velocity commands are published to a safe debug topic:
+
+```text
+/slam_v44/debug_cmd_vel
+```
+
+After confirming the path and command behavior, the output can be switched to:
+
+```text
+/cmd_vel
+```
+
+## Summary
+
+`slam_v44` is designed around one main principle:
+
+> Odometry provides stable motion prediction, while scan matching only performs small local corrections.
+
+This makes the SLAM process more stable than relying on scan matching alone, especially on a real robot where odometry is available but LaserScan matching can be affected by the environment.
+
 
 ## Features
 
@@ -148,6 +288,11 @@ This project is an experimental robotics package intended for SLAM, mapping, and
 
 The ROS package declares the MIT license in `slam_v44/package.xml`.
 
+<details>
+<summary>耶duang~</summary>
 
-硬件还是得看上古真神c++ <br>
-锻炼情绪稳定性，就来搞真机，搞过都说好，哈哈（咬牙切齿
+硬件还是得看上古真神 C++ <br>
+锻炼情绪稳定性，就来搞真机，搞过都说好，哈哈（咬牙切齿）
+
+</details>
+
