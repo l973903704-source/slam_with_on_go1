@@ -2,11 +2,6 @@
 
 ROS Melodic workspace package for odometry-assisted 2D LaserScan SLAM and navigation on a Unitree Go1-style robot platform.
 
-# slam_v44 Concept Summary
-
-`slam_v44` is a ROS Melodic package for odometry-assisted 2D LaserScan SLAM, occupancy grid mapping, and basic navigation.
-
-The main idea is to use odometry as the primary source of continuous motion estimation, use scan matching only for small local corrections, and then insert LaserScan data into a fixed `map` frame.
 
 ## Core Idea
 
