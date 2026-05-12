@@ -185,8 +185,9 @@ The package depends on these ROS packages:
 - `tf`
 - `visualization_msgs`
 
-<details>
-<summary>Run SLAM<summary>
+<details>     
+<summary>Run SLAM</summary>
+
 
 Start mapping with the default LaserScan and odometry topics:
 
@@ -265,6 +266,7 @@ This project is an experimental robotics package intended for SLAM, mapping, and
 ## License
 
 The ROS package declares the MIT license in `slam_v44/package.xml`.
+
 </details>
 
 
