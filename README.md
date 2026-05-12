@@ -3,6 +3,44 @@
 ROS Melodic workspace package for odometry-assisted 2D LaserScan SLAM and navigation on a Unitree Go1-style robot platform.
 
 <details>
+<summary>Notes Before Running on a Real Robot</summary>
+
+## 1. Understand the Required Background Knowledge
+
+Before running the system on a real robot, it is helpful to understand the basic concepts below. You do not need to master all of them at the beginning, but you should at least know what role each one plays in the whole system:
+
+- **ROS basics**: Understand the basic usage of `roscore`, `roslaunch`, `rosrun`, `rosnode`, `rostopic`, and `rosparam`.
+- **Topic communication**: Know that ROS nodes exchange data through topics, such as `/scan`, `/cmd_vel`, `/map`, and `/odom`.
+- **Common ROS message types**: Understand what `sensor_msgs/LaserScan`, `nav_msgs/Odometry`, `nav_msgs/OccupancyGrid`, `geometry_msgs/PoseStamped`, and `geometry_msgs/Twist` represent.
+- **TF coordinate transforms**: Understand the relationship between frames such as `map`, `odom`, and `base_link`, and why the robot pose, map, and goal must be in a consistent coordinate frame.
+- **2D LiDAR basics**: Know how LaserScan `range` and `angle` values are converted into 2D points `(x, y)`.
+- **Odometry**: Understand that odometry estimates the robot motion from its own sensors. It is usually continuous and smooth, but it may drift over time.
+- **Occupancy grid maps**: Know that the map is represented by many grid cells, where each cell can be unknown, free, or occupied.
+- **Basic SLAM workflow**: Understand the loop of “sensor data -> pose estimation -> map update -> publish map and pose”.
+- **Scan matching**: Know that scan matching compares the current laser scan with the existing map to correct the robot pose.
+- **A\* path planning**: Here, I used A*, but the result was not satisfactory. It is recommended to consider other search algorithms.
+- **Velocity control with `cmd_vel`**: Know that `/cmd_vel` usually contains linear and angular velocity commands, and it should be tested with a debug topic before connecting to the real robot.
+- **Linux and terminal basics**: Be comfortable using commands such as `cd`, `ls`, `catkin_make`, and `source devel/setup.bash`, and learn how to read terminal errors.
+- **Network configuration**: Understand that SSH, `ROS_MASTER_URI`, `ROS_IP`, and `ROS_HOSTNAME` can affect remote ROS communication.
+
+## 2. If You Are Using Unitree Go1, C++ Is Recommended
+
+For hardware-related communication, real-time control, and ROS node debugging, C++ is usually more stable and closer to many official SDK examples.
+
+## 3. Run the Whole Pipeline First, Then Modify Algorithm Details
+
+First make sure the whole process works: LiDAR, odometry, TF, map publishing, RViz visualization, navigation goals, and velocity output. After that, modify details such as scan matching, map updating, or path planning. Otherwise, it is easy to confuse algorithm bugs with topic, TF, network, or robot-driver issues.
+
+## 4. Remote Connection Stability Can Be Affected by Heat
+
+SSH or remote desktop connections may become unstable when the robot computer is hot, overloaded, or under poor network conditions. If you really cannot connect, shut it down, let it cool for a while, and then restart it.
+
+## 5. Keep emotions stable and good luck!
+
+
+</details>
+
+<details>
 <summary>Core Idea</summary>
 
 ```text
