@@ -37,6 +37,7 @@ SSH or remote desktop connections may become unstable when the robot computer is
 
 ## 5. Keep emotions stable and good luck!
 
+When there are many bugs, don't rush to crash the computer. Instead, watch something else to calm down.
 
 </details>
 
