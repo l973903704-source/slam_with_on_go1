@@ -1,0 +1,47 @@
+﻿<launch>
+  <arg name="scan_topic" default="/slamware_ros_sdk_server_node/scan" />
+  <arg name="odom_topic" default="/slamware_ros_sdk_server_node/odom" />
+  <arg name="map_topic" default="/slam_v44/map" />
+  <arg name="navigation_map_topic" default="/slam_v44/map" />
+  <arg name="external_pose_topic" default="/slamware_ros_sdk_server_node/robot_pose" />
+  <arg name="external_odom_topic" default="/slamware_ros_sdk_server_node/odom" />
+  <arg name="cmd_vel_topic" default="/slam_v44/debug_cmd_vel" />
+  <arg name="persistent_obstacle_marker_topic" default="/slam_v44/persistent_obstacle_markers" />
+  <arg name="start_slam" default="true" />
+  <arg name="start_navigation" default="false" />
+  <arg name="start_persistent_obstacles" default="true" />
+  <arg name="start_rviz" default="false" />
+  <arg name="use_odom_prediction" default="true" />
+  <arg name="require_odom_for_mapping" default="true" />
+  <arg name="publish_map_to_odom_tf" default="true" />
+
+  <node if="$(arg start_slam)" pkg="slam_v44" type="slam_v44_node" name="slam_v44_node" output="screen">
+    <rosparam command="load" file="$(find slam_v44)/config/slam_v44.yaml" />
+    <param name="scan_topic" value="$(arg scan_topic)" />
+    <param name="odom_topic" value="$(arg odom_topic)" />
+    <param name="map_topic" value="$(arg map_topic)" />
+    <param name="use_odom_prediction" value="$(arg use_odom_prediction)" />
+    <param name="require_odom_for_mapping" value="$(arg require_odom_for_mapping)" />
+    <param name="publish_map_to_odom_tf" value="$(arg publish_map_to_odom_tf)" />
+  </node>
+
+  <node if="$(arg start_navigation)" pkg="slam_v44" type="slam_v44_navigation_node" name="slam_v44_navigation_node" output="screen">
+    <rosparam command="load" file="$(find slam_v44)/config/slam_v44.yaml" />
+    <param name="scan_topic" value="$(arg scan_topic)" />
+    <param name="map_topic" value="$(arg map_topic)" />
+    <param name="navigation_map_topic" value="$(arg navigation_map_topic)" />
+    <param name="external_pose_topic" value="$(arg external_pose_topic)" />
+    <param name="external_odom_topic" value="$(arg external_odom_topic)" />
+    <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
+  </node>
+
+  <node if="$(arg start_persistent_obstacles)" pkg="slam_v44" type="slam_v44_persistent_obstacle_marker_node" name="slam_v44_persistent_obstacle_marker_node" output="screen">
+    <rosparam command="load" file="$(find slam_v44)/config/slam_v44.yaml" />
+    <param name="map_topic" value="$(arg map_topic)" />
+    <param name="persistent_obstacle_marker_topic" value="$(arg persistent_obstacle_marker_topic)" />
+  </node>
+
+  <node if="$(arg start_rviz)" pkg="rviz" type="rviz" name="rviz_slam_v44" output="screen"
+        args="-d $(find slam_v44)/config/slam_v44_persistent_obstacles.rviz" />
+</launch>
+

@@ -1,0 +1,89 @@
+﻿scan_topic: "/slamware_ros_sdk_server_node/scan"
+odom_topic: "/slamware_ros_sdk_server_node/odom"
+map_topic: "/slam_v44/map"
+navigation_map_topic: "/slam_v44/map"
+pose_topic: "/slam_v44/pose"
+slam_path_topic: "/slam_v44/slam_path"
+external_map_topic: "/slamware_ros_sdk_server_node/map"
+external_pose_topic: "/slamware_ros_sdk_server_node/robot_pose"
+external_odom_topic: "/slamware_ros_sdk_server_node/odom"
+extra_pose_topic: ""
+goal_topic: "/move_base_simple/goal"
+cmd_vel_topic: "/slam_v44/debug_cmd_vel"
+global_path_topic: "/slam_v44/global_path"
+
+map_frame: "map"
+odom_frame: "odom"
+base_frame: "base_link"
+publish_tf: true
+publish_map_to_odom_tf: true
+use_odom_prediction: true
+require_odom_for_mapping: true
+
+initial_x: 0.0
+initial_y: 0.0
+initial_theta: 0.0
+
+map_resolution: 0.05
+map_width_m: 40.0
+map_height_m: 40.0
+map_origin_x: -20.0
+map_origin_y: -20.0
+occupied_threshold: 0.65
+free_threshold: 0.35
+
+min_range: 0.05
+max_range: 20.0
+use_scan_range_limits: true
+scan_skip: 2
+
+log_odds_hit: 0.85
+log_odds_miss: -0.40
+log_odds_min: -5.0
+log_odds_max: 5.0
+
+linear_search_window: 0.10
+angular_search_window: 0.08
+linear_step: 0.01
+angular_step: 0.01
+correlation_radius_cells: 2
+max_scoring_points: 240
+min_match_score: 0.02
+
+keyframe_min_translation: 0.08
+keyframe_min_rotation: 0.06
+publish_map_every_n_scans: 1
+
+robot_radius: 0.25
+inflation_radius: 0.35
+planner_allow_unknown: false
+planner_diagonal_move: true
+planner_occupied_value: 65
+replan_interval: 1.0
+
+goal_tolerance: 0.20
+yaw_tolerance: 0.25
+lookahead_distance: 0.60
+max_linear_speed: 0.25
+max_angular_speed: 0.60
+linear_gain: 0.70
+angular_gain: 1.40
+front_obstacle_angle: 0.70
+min_front_obstacle_distance: 0.45
+slow_front_obstacle_distance: 0.90
+control_rate: 10.0
+
+# Persistent red obstacle memory layer
+# This node reads /slam_v44/map, remembers every obstacle boundary cell that has ever appeared,
+# and republishes the whole remembered set, so old red points do not disappear when robot view changes.
+persistent_obstacle_marker_topic: "/slam_v44/persistent_obstacle_markers"
+persistent_obstacle_occupied_value: 65
+persistent_obstacle_free_value: 20
+persistent_obstacle_boundary_only: true
+persistent_obstacle_scale: 0.08
+persistent_obstacle_stride: 1
+persistent_obstacle_max_points: 0
+persistent_obstacle_resolution: 0.05
+persistent_obstacle_min_confirmations: 1
+persistent_obstacle_z: 0.06
+
