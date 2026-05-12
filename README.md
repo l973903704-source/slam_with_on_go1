@@ -3,7 +3,7 @@
 ROS Melodic workspace package for odometry-assisted 2D LaserScan SLAM and navigation on a Unitree Go1-style robot platform.
 
 <detials>
-<summert>Core Idea</summert> 
+<summary>Core Idea</summary>
 
 ```text
 Odometry prediction
